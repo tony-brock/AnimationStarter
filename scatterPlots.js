@@ -7,7 +7,7 @@ var getMeanGrade = function(entries)
         })
 }
 
-// draw the scatter plot (update)
+ //draw the scatter plot (update)
 var drawScatter = function(students,target,
               xScale,yScale,xProp,yProp)
 {
@@ -29,7 +29,7 @@ var drawScatter = function(students,target,
         return yScale(getMeanGrade(student[yProp]));    
     })
     .attr("r",4);
-}
+};
 // gets rid of the points 
 var clearScatter = function(target)
 {
@@ -37,6 +37,45 @@ var clearScatter = function(target)
         .select(".graph")
         .selectAll("circle")
         .remove();
+};
+//have to update graph
+var updateGraph = function(target, students, margins, screen, graph)
+{
+    console.log("Updating Graph")
+        var xScale = d3.scaleLinear()
+        .domain([0,100])
+        .range([0,graph.width]);
+    var yScale = d3.scaleLinear()
+        .domain([0,100])
+        .range([graph.height,0]);
+    
+    updateAxes(target,xScale,yScale);
+    //JOIN
+    var circles = d3.select(target)
+                .select(".graph")
+                .selectAll("circle")
+                .data(students)
+    //ENTER
+    circles.enter()
+            .append("circle")
+    //EXIT
+    circles.exit()
+            .remove()
+    //UPDATE
+    d3.select(target)
+        .select(".graph")
+        .selectAll("cirlce")
+        .transition()
+        .attr("cx", function(student)
+             {
+                return xScale(getMeanGrade(student[xProp]));
+            })
+        .attr("cy",function(student)
+              {
+                return yScale(getMeanGrade(student[yProp]));   
+            })
+    .attr("r",4);
+  
 }
 
 // creates the axes based on the size of the screen and the scales of the graph.
@@ -58,8 +97,8 @@ var createAxes= function(screen,margins,graph,
         .call(yAxis)
 }
 
-var initAxes= function(sreen,margins, graph, target, xScale, yScale){
-    
+var initAxes= function(screen,margins, graph, target, xScale, yScale)
+{
     var axes= d3.select(target)
             .append("g")
             .classed("class", "axis");
@@ -73,10 +112,10 @@ var initAxes= function(sreen,margins, graph, target, xScale, yScale){
     axes.append("g")
         .attr("id","yAxis")
         .attr("transform","translate("+margins.left+","+(margins.top)+")")
-} 
+}; 
 
-var updateAxes= function(target,xScale, yScale){
-    
+var updateAxes= function(target,xScale, yScale)
+{
     var xAxis= d3.axisBottom(xScale);
     var yAxis= d3.axisLeft(yScale); 
     
@@ -131,15 +170,13 @@ var initGraph = function(target,students)
     
     //calls the other functions to create the points, axes, and the title. 
     initAxes(screen,margins,graph,target,xScale,yScale);
-    updateAxes(target,xScale,yScale);
+    updateAxes(target, xScale, yScale);
     
     initButtons(students,target,xScale,yScale);
     
     setBanner("Click buttons to graphs");
-    
-    
-
-}
+};
+  
 // creates the buttons for the different data for the different graphs.
 var initButtons = function(students,target,xScale,yScale)
 {
@@ -147,9 +184,7 @@ var initButtons = function(students,target,xScale,yScale)
     d3.select("#fvh")
     .on("click",function()
     {
-        
-        drawScatter(students,target,
-              xScale,yScale,"final","homework");
+        updateGraph(students,target,screen,xScale,yScale,"final","homework");
     })
     //button to create Hw vs test
     d3.select("#hvq")
@@ -174,7 +209,7 @@ var initButtons = function(students,target,xScale,yScale)
       
         drawScatter(students,target,
               xScale,yScale,"test","quizes");
-    })
+    });
     
     
     

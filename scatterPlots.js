@@ -225,7 +225,7 @@ var setBanner = function(msg)
 
 
 // loads in data
-var penguinPromise = d3.json("/classData.json");
+var penguinPromise = d3.json("classData.json");
 
 penguinPromise.then(function(penguins)
 {

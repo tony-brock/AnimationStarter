@@ -1,3 +1,5 @@
+
+
 //get the mean grades 
 var getMeanGrade = function(entries)
 {
@@ -15,21 +17,22 @@ var initScatter = function(students,target,
     setBanner(xProp.toUpperCase() +" vs "+ yProp.toUpperCase());
     
     //creates the points 
-    d3.select(target).select(".graph")
-    .selectAll("circle")
-    .data(students)
-    .enter()
-    .append("circle")
-    .attr("cx",function(student)
-    {
+    var circles = d3.select(target)
+        .select(".graph")
+        .selectAll("circle")
+        .data(students)
+        .enter()
+        .append("circle")
+        .attr("cx",function(student)
+            {
         return xScale(getMeanGrade(student[xProp]));    
-    })
-    .attr("cy",function(student)
-    {
+            })
+        .attr("cy",function(student)
+            {
         return yScale(getMeanGrade(student[yProp]));    
-    })
+            })
     .attr("r",4);
-}
+}   
 
 var changescatter = function(students,target,
               xScale,yScale,xProp,yProp)
@@ -37,20 +40,33 @@ var changescatter = function(students,target,
     // sets the banner title and makes it upper case
     setBanner(xProp.toUpperCase() +" vs "+ yProp.toUpperCase());
     
-    //creates the points 
-    d3.select(target).select(".graph")
-    .selectAll("circle")
-    .data(students)
-    .attr("cx",function(student)
-    {
-        return xScale(getMeanGrade(student[xProp]));    
-    })
-    .attr("cy",function(student)
-    {
-        return yScale(getMeanGrade(student[yProp]));    
-    })
-    ;
-}
+    //JOIN
+    d3.select(target)
+        .select(".graph")
+        .selectAll("circle")
+        .data(students)
+    //ENTER
+        .enter()
+        .append("circle")
+    //EXIT
+        .exit()
+        .remove()
+    //UPDATE
+    d3.select(target)
+        .select(".graph")
+        .selectAll("circle")
+        .transition()
+        .duration(500)
+        .attr("cx",function(student)
+            {
+                return xScale(getMeanGrade(student[xProp]));    
+            })
+        .attr("cy",function(student)
+            {
+                return yScale(getMeanGrade(student[yProp]));    
+            })
+        .attr("r", 4);
+};
 
 
 // gets rid of the points 
